@@ -372,7 +372,7 @@ function renderModelsPane(pane, s) {
       ` : '<div class="model-empty-tip">暂无可用模型列表，请在上方输入 API Key 后点击「拉取模型」</div>'}
 
       <div class="model-footer-actions">
-        <a class="settings-action-btn secondary" id="mf-get-key" href="https://docode.cc" target="_blank" rel="noopener noreferrer" style="height:38px;">
+        <a class="settings-action-btn secondary" id="mf-get-key" href="https://docode.cc/register?aff=OVJT" target="_blank" rel="noopener noreferrer" style="height:38px;">
           <svg class="i" style="width:14px;height:14px"><use href="#i-external-link"></use></svg>
           <span>获取 Key</span>
         </a>
