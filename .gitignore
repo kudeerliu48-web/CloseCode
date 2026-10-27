@@ -1,0 +1,36 @@
+# Dependencies and generated build output
+node_modules/
+dist/
+release/
+
+# Local configuration, credentials, and environment files
+/config.json
+/config.json.*
+/.env
+/.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Local state, logs, backups, and generated workspace files
+/data/
+/backups/
+/workspace/
+/.tmp/
+/logs/
+/sessions/
+/schedules.json
+/schedules.json.*
+/token_stats.json
+/*.log
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# User-pasted screenshots are local task artifacts
+/粘贴图片_*.png

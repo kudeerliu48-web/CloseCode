@@ -1,0 +1,237 @@
+/* Opt-in only: the default UI remains unchanged when data-glass is not true. */
+:root {
+  --glass-rgb: 250,250,252;
+  --glass-alpha: clamp(.68, calc(.4 + var(--wallpaper-opacity, .85) * .4), .78);
+  --glass-surface: rgba(var(--glass-rgb), var(--glass-alpha));
+  --glass-strong: rgba(var(--glass-rgb), calc(var(--glass-alpha) + .14));
+  --glass-border: rgba(255,255,255,.68);
+  --glass-edge: rgba(255,255,255,.82);
+  --glass-sheen: linear-gradient(145deg, rgba(255,255,255,.34), rgba(255,255,255,.04) 48%, rgba(255,255,255,.12));
+  --glass-shadow: 0 12px 36px rgba(31,38,58,.09), 0 2px 6px rgba(31,38,58,.04), inset 0 1px 0 var(--glass-edge);
+  --glass-dialog-shadow: 0 32px 88px rgba(28,33,48,.2), 0 4px 16px rgba(28,33,48,.07), inset 0 1px 0 var(--glass-edge);
+  --glass-blur: blur(32px) saturate(155%);
+  --glass-selection-text: #484bba;
+  --glass-selection-bg: #f4f4fc;
+  --glass-wash: radial-gradient(ellipse at 5% 12%, rgba(142,180,220,.22), transparent 58%), radial-gradient(ellipse at 92% 85%, rgba(191,175,209,.2), transparent 60%);
+}
+html[data-theme="dark"] {
+  --glass-rgb: 30,31,36;
+  --glass-border: rgba(255,255,255,.16);
+  --glass-edge: rgba(255,255,255,.16);
+  --glass-selection-text: #d6d5ff;
+  --glass-selection-bg: #383a49;
+  --glass-sheen: linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.01) 48%, rgba(255,255,255,.025));
+  --glass-shadow: 0 14px 40px rgba(0,0,0,.24), 0 2px 6px rgba(0,0,0,.12), inset 0 1px 0 var(--glass-edge);
+  --glass-dialog-shadow: 0 32px 88px rgba(0,0,0,.42), 0 4px 16px rgba(0,0,0,.2), inset 0 1px 0 var(--glass-edge);
+  --glass-wash: radial-gradient(ellipse at 5% 12%, rgba(68,98,137,.24), transparent 58%), radial-gradient(ellipse at 92% 85%, rgba(111,92,136,.2), transparent 60%);
+}
+/* Keep the title and draggable bar. Windows/Linux controls share this surface,
+   not a separately painted native overlay; macOS keeps its traffic lights. */
+html[data-desktop="true"] { --desktop-titlebar-height: 36px; }
+html[data-desktop="true"][data-window-fullscreen="true"] { --desktop-titlebar-height: 0px; }
+html[data-desktop="true"] body { padding-top: var(--desktop-titlebar-height); }
+.desktop-titlebar { position: fixed; inset: 0 0 auto; height: var(--desktop-titlebar-height); z-index: 11000; background: var(--wb-bg); color: var(--wb-text); border-bottom: 1px solid var(--wb-border); isolation: isolate; overflow: hidden; user-select: none; -webkit-app-region: drag; }
+.desktop-titlebar-content { display: flex; align-items: center; height: 100%; margin-left: env(titlebar-area-x, 0px); width: env(titlebar-area-width, calc(100% - 150px)); padding: 0 14px; min-width: 0; }
+.desktop-titlebar-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 500; }
+html[data-platform="darwin"] .desktop-titlebar-content { padding-left: 82px; }
+.desktop-titlebar.has-window-controls { display: flex; }
+.desktop-titlebar.has-window-controls .desktop-titlebar-content { flex: 1; width: auto; margin-left: 0; }
+.desktop-window-controls { display: flex; flex: 0 0 auto; height: 100%; background: transparent; border: 0; box-shadow: none; -webkit-app-region: no-drag; }
+.desktop-window-button { display: grid; place-items: center; flex: 0 0 46px; width: 46px; height: 100%; margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; color: inherit; appearance: none; -webkit-app-region: no-drag; }
+.desktop-window-button svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1; pointer-events: none; }
+/* Theme and hover changes must not leave a fading caption background behind. */
+.desktop-window-button { transition: none; }
+.desktop-window-button:hover { background: rgba(127,127,127,.14); }
+.desktop-window-button:active { background: rgba(127,127,127,.24); }
+.desktop-window-button[data-window-action="close"]:hover { background: #c42b1c; color: #fff; }
+.desktop-window-button[data-window-action="close"]:active { background: #a92317; color: #fff; }
+.desktop-window-button:focus-visible { outline: 2px solid currentColor; outline-offset: -4px; }
+.desktop-window-button .window-icon-restore { display: none; }
+html[data-window-maximized="true"] .desktop-window-button .window-icon-maximize { display: none; }
+html[data-window-maximized="true"] .desktop-window-button .window-icon-restore { display: block; }
+@media (forced-colors: active) {
+  .desktop-window-button { color: ButtonText; }
+  .desktop-window-button:hover { background: Highlight; color: HighlightText; }
+}
+html[data-desktop="true"] .modal-mask { top: var(--desktop-titlebar-height); }
+html[data-window-fullscreen="true"] .desktop-titlebar { display: none; }
+/* Give settings a visible boundary with or without glass, without blurring its text. */
+#modal-box:has(.settings-layout) { border: 1px solid rgba(116,130,154,.48); box-shadow: 0 20px 60px rgba(23,24,28,.2), inset 0 0 0 1px rgba(255,255,255,.25); }
+html[data-theme="dark"] #modal-box:has(.settings-layout) { border-color: rgba(172,188,214,.38); box-shadow: 0 20px 60px rgba(0,0,0,.38), inset 0 0 0 1px rgba(255,255,255,.04); }
+textarea#input { overflow-y: auto; }
+/* The preview and control are visible even while the effect is off. */
+.glass-settings-card { margin-bottom: 18px; padding: 20px; border: 1px solid var(--wb-border); border-radius: 16px; background: var(--wb-bg); color: var(--wb-text); }
+.glass-settings-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+.glass-settings-copy { min-width: 0; }
+.glass-settings-copy h4 { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; font-size: 15px; font-weight: 650; }
+.glass-setting-tag { padding: 2px 7px; border: 1px solid var(--wb-border); border-radius: 6px; font-size: 10px; font-weight: 500; color: var(--wb-text-2); }
+
+.glass-toggle { position: relative; display: inline-flex; flex: 0 0 46px; width: 46px; height: 28px; margin-top: 2px; cursor: pointer; }
+.m-body .glass-toggle input, .glass-toggle input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; opacity: 0; z-index: 1; cursor: pointer; }
+.glass-toggle-track { width: 46px; height: 28px; border: 1px solid var(--wb-border); border-radius: 20px; background: var(--wb-bg-hover); transition: background-color .18s; }
+.glass-toggle-track::after { content: ""; position: absolute; top: 4px; left: 4px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.2), 0 0 1px rgba(0,0,0,.16); transition: transform .18s; }
+.glass-toggle input:checked + .glass-toggle-track { background: var(--wb-brand); border-color: var(--wb-brand); }
+.glass-toggle input:checked + .glass-toggle-track::after { transform: translateX(18px); background: #fff; }
+.glass-toggle input:focus-visible + .glass-toggle-track { outline: 2px solid var(--wb-brand); outline-offset: 3px; }
+.glass-toggle input:disabled { cursor: wait; }
+.glass-toggle input:disabled + .glass-toggle-track { opacity: .6; }
+.glass-preview { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 18px 0 14px; padding: 16px; border-radius: 12px; background: radial-gradient(circle at 70% 5%, #c5b4ec, transparent 55%), radial-gradient(circle at 30% 95%, #87bddf, transparent 65%), #c7d8ef; overflow: hidden; }
+html[data-theme="dark"] .glass-preview { background: radial-gradient(circle at 70% 5%, #70618f, transparent 55%), radial-gradient(circle at 30% 95%, #416e8c, transparent 65%), #30405b; }
+.glass-preview-surface { padding: 13px; border: 1px solid var(--glass-border); border-radius: 16px; box-shadow: var(--glass-shadow); }
+.glass-preview-surface span { display: block; margin-bottom: 12px; font-size: 11px; font-weight: 600; }
+.glass-preview-surface i { display: block; height: 4px; margin-top: 7px; border-radius: 3px; background: var(--wb-text-3); opacity: .32; }
+.glass-preview-surface i:last-child { width: 62%; }
+.glass-preview-solid { background: var(--background); }
+.glass-preview-frosted { background: var(--glass-sheen), var(--glass-surface); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+.glass-settings-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; font-size: 11px; color: var(--wb-text-2); }
+
+.glass-setting-message { margin: 8px 0 0; font-size: 12px; line-height: 1.6; color: var(--wb-text-2); overflow-wrap: anywhere; }
+.glass-setting-message:empty { display: none; }
+.glass-setting-message.is-error { color: var(--wb-err); }
+
+/* Dense sidebar text needs its own contrast floor, even at the clearest wallpaper
+   setting. Keep these tokens local so other glass surfaces retain their depth. */
+html[data-glass="true"] :is(.topbar, .input-card, .modal, .files-panel, .picker-menu, .delegation-popover) {
+  --wb-text-2: #303642;
+  --wb-text-3: #404653;
+}
+html[data-glass="true"][data-theme="dark"] :is(.topbar, .input-card, .modal, .files-panel, .picker-menu, .delegation-popover) {
+  --wb-text-2: #d7dbe3;
+  --wb-text-3: #c5cbd6;
+}
+html[data-glass="true"] body > aside {
+  --sidebar-glass-alpha: clamp(.8, calc(.52 + var(--wallpaper-opacity, .85) * .4), .9);
+  --sidebar-glass-surface: rgba(var(--glass-rgb), var(--sidebar-glass-alpha));
+  --wb-text-2: var(--foreground);
+  --wb-text-3: #474e5e;
+  --sidebar-active-text: var(--glass-selection-text);
+  --sidebar-active-bg: var(--glass-selection-bg);
+  background-color: var(--background);
+}
+html[data-glass="true"][data-theme="dark"] body > aside {
+  --wb-text-3: #c2c8d4;
+}
+html[data-glass="true"] body > aside :is(.side-nav .item, .proj-item, .hist-item):hover {
+  background: var(--accent);
+  color: var(--foreground);
+}
+html[data-glass="true"] body > aside :is(.side-nav .item, .proj-item, .hist-item).active {
+  background: var(--sidebar-active-bg);
+  color: var(--sidebar-active-text);
+  box-shadow: inset 0 1px 0 var(--glass-edge), 0 2px 8px rgba(20,24,38,.06);
+  font-weight: 600;
+}
+/* Rounded selection and quiet hairlines echo system materials, while the text
+   retains the contrast floor above regardless of the wallpaper's brightness. */
+html[data-glass="true"] body > aside :is(.side-nav .item, .proj-item, .hist-item) { border-radius: 14px; margin-bottom: 3px; }
+html[data-glass="true"] body > aside :is(.side-nav, .side-nav.top) { border-color: rgba(128,132,145,.2); }
+html[data-glass="true"] body > aside #new-task { border-radius: 16px; box-shadow: inset 0 1px 0 rgba(255,255,255,.24), 0 4px 12px rgba(70,62,158,.16); }
+html[data-glass="true"] .settings-nav .cat { border-radius: 14px; }
+html[data-glass="true"] .settings-nav .cat.active { background: var(--glass-selection-bg); color: var(--glass-selection-text); border-color: transparent; box-shadow: inset 0 1px 0 var(--glass-edge), 0 2px 8px rgba(20,24,38,.06); }
+html[data-glass="true"] .settings-nav .cat.active::before { display: none; }
+html[data-glass="true"] .topbar #quota-amount { color: var(--glass-selection-text); }
+html[data-glass="true"] body > aside .side-nav .item.active .tx .sub { color: inherit; opacity: 1; }
+html[data-glass="true"] body > aside #gear-btn:focus-visible,
+html[data-glass="true"] body > aside :is(button, a, [tabindex]):focus-visible {
+  outline: 2px solid var(--sidebar-active-text);
+  outline-offset: 2px;
+}
+/* Opaque fallback also covers the inline wallpaper in engines without blur. */
+html[data-glass="true"] #sidebar-overlay { opacity: 1 !important; background: var(--background) !important; }
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  /* Inline wallpaper continues to win. Without one, a quiet wash gives the glass depth. */
+  html[data-glass="true"] body { background-image: var(--glass-wash); background-attachment: fixed; }
+  html[data-glass="true"] body > aside,
+  html[data-glass="true"] .topbar,
+  html[data-glass="true"] .desktop-titlebar,
+  html[data-glass="true"] .modal,
+  html[data-glass="true"] .files-panel,
+  html[data-glass="true"] .picker-menu,
+  html[data-glass="true"] .delegation-popover {
+    background-color: var(--glass-surface);
+    border-color: var(--glass-border);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+  }
+  /* Native material is behind the web page: an opaque body would hide it. */
+  html[data-glass="true"][data-native-glass="true"] body { background-color: rgba(var(--glass-rgb), .16); }
+  /* Stats/title bars must not filter the already tinted page wallpaper twice. */
+  html[data-glass="true"] .topbar { position: relative; isolation: isolate; }
+  html[data-glass="true"][data-wallpaper="true"] :is(.topbar, .desktop-titlebar) { background-color: transparent; }
+  html[data-glass="true"][data-wallpaper="true"] :is(.topbar, .desktop-titlebar)::before { content: ""; position: absolute; inset: -48px; clip-path: inset(48px); z-index: -1; pointer-events: none; background-image: linear-gradient(var(--glass-surface), var(--glass-surface)), var(--glass-wallpaper); background-size: cover; background-position: center; filter: var(--glass-blur); }
+  html[data-glass="true"] .topbar { box-shadow: inset 0 -1px 0 var(--glass-edge); }
+  html[data-glass="true"] .topbar button { background-color: var(--glass-strong); border-color: var(--glass-border); border-radius: 14px; box-shadow: inset 0 1px 0 var(--glass-edge); color: var(--wb-text); }
+  html[data-glass="true"] body > aside { background-color: var(--sidebar-glass-surface); box-shadow: inset -1px 0 0 var(--glass-edge); -webkit-backdrop-filter: blur(36px) saturate(110%); backdrop-filter: blur(36px) saturate(110%); }
+  /* With a wallpaper, only the overlay tints and blurs it. Without one, the
+     sidebar itself provides the same readable surface over the page/native glass. */
+  html[data-glass="true"][data-wallpaper="true"] body > aside { background-color: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  html[data-glass="true"] #sidebar-overlay { background: var(--sidebar-glass-surface) !important; -webkit-backdrop-filter: blur(36px) saturate(110%); backdrop-filter: blur(36px) saturate(110%); }
+  html[data-glass="true"] :is(.picker-menu, .delegation-popover) { background: var(--glass-sheen), var(--glass-strong); border-radius: 20px; box-shadow: var(--glass-shadow); }
+  html[data-glass="true"] .modal { position: relative; isolation: isolate; background-image: var(--glass-sheen); border-radius: 28px; box-shadow: var(--glass-dialog-shadow); }
+  html[data-glass="true"] #modal-box:has(.settings-layout) { border-color: var(--glass-edge); box-shadow: var(--glass-dialog-shadow); }
+  html[data-glass="true"][data-theme="dark"] #modal-box:has(.settings-layout) { border-color: rgba(220,225,240,.38); }
+  /* Dialogs also sit above the page's readability mask. Give them an independently
+     frosted wallpaper layer; never blur the text or reduce the whole dialog's opacity. */
+  html[data-glass="true"][data-wallpaper="true"] .modal { background: transparent; }
+  html[data-glass="true"][data-wallpaper="true"] .modal::before { content: ""; position: absolute; inset: -48px; z-index: -1; pointer-events: none; background-image: var(--glass-sheen), linear-gradient(var(--glass-surface), var(--glass-surface)), var(--glass-wallpaper); background-size: cover; background-position: center; filter: var(--glass-blur); }
+  html[data-glass="true"] .settings-layout { --wb-bg: rgba(var(--glass-rgb), .14); --wb-bg-side: rgba(var(--glass-rgb), .1); }
+  html[data-glass="true"] :is(.settings-pane, .settings-nav) { background: transparent; }
+  html[data-glass="true"] .glass-settings-card { background: rgba(var(--glass-rgb), .14); border-color: var(--glass-border); border-radius: 22px; box-shadow: inset 0 1px 0 var(--glass-edge); }
+  html[data-glass="true"] .settings-pane :is(input:not([type="range"]):not([type="checkbox"]), textarea, select) { background-color: var(--glass-strong); }
+  /* The blur lives on a pseudo-element, NOT the input card: a filtered ancestor
+     would turn the fixed expert picker into a card-relative popup. */
+  html[data-glass="true"] .input-card { position: relative; isolation: isolate; background: transparent; border: 1px solid var(--glass-border); border-radius: 26px; box-shadow: var(--glass-shadow); }
+  html[data-glass="true"] .input-card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; z-index: -1; pointer-events: none; background: var(--glass-sheen), var(--glass-surface); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+  html[data-glass="true"] .input-card:focus-within { border-color: var(--wb-brand); }
+}
+/* Accessibility and older engines: keep opaque surfaces, not unreadable glass. */
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+  html[data-glass="true"][data-wallpaper="true"] body > aside,
+  html[data-glass="true"] :is(body > aside, .topbar, .desktop-titlebar, .modal, .files-panel, .picker-menu, .delegation-popover, .glass-settings-card),
+  html[data-glass="true"] .input-card::before, .glass-preview-frosted { background: var(--background); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  html[data-glass="true"][data-native-glass="true"] body { background-color: var(--background); }
+  html[data-glass="true"][data-wallpaper="true"] :is(.modal, .topbar, .desktop-titlebar) { background: var(--background); }
+  html[data-glass="true"] :is(.modal, .topbar, .desktop-titlebar)::before { display: none; }
+  html[data-glass="true"] #sidebar-overlay { background: var(--background) !important; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  html[data-glass="true"] .settings-layout { --wb-bg: var(--background); --wb-bg-side: var(--muted); }
+}
+@media (forced-colors: active) {
+  html[data-glass="true"] body > aside :is(.side-nav .item, .proj-item, .hist-item).active,
+  html[data-glass="true"] .settings-nav .cat.active {
+    background: Highlight;
+    color: HighlightText;
+    box-shadow: none;
+    outline: 1px solid Highlight;
+    outline-offset: -1px;
+  }
+  html[data-glass="true"] body > aside #gear-btn:focus-visible,
+  html[data-glass="true"] body > aside :is(button, a, [tabindex]):focus-visible { outline-color: Highlight; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glass-toggle-track, .glass-toggle-track::after { transition: none; }
+}
+@media (max-width: 900px) {
+  html[data-desktop="true"] body.side-open > aside { top: var(--desktop-titlebar-height); }
+  html[data-desktop="true"] :is(.files-panel, .preview-panel).show { top: calc(56px + var(--desktop-titlebar-height)); }
+}
+@media (max-width: 640px) {
+  html[data-glass="true"] .modal { border-radius: 0; }
+  html[data-glass="true"] .input-card { border-radius: 22px; }
+  html[data-desktop="true"] .modal { height: calc(100dvh - var(--desktop-titlebar-height)); max-height: calc(100dvh - var(--desktop-titlebar-height)); }
+}
+/* 停靠侧栏的蒙版覆盖到外沿；半透明边框会露出未经蒙版处理的壁纸，形成亮缝。 */
+@media (min-width: 901px) {
+  html body > aside,
+  html[data-glass="true"] body > aside { border-right: 0; box-shadow: none; }
+}
+@media (forced-colors: active) {
+  html body > aside,
+  html[data-glass="true"] body > aside { border-right: 1px solid CanvasText; }
+}
+@media (max-width: 520px) {
+  .glass-settings-card { padding: 15px; }
+  .glass-settings-heading { gap: 12px; }
+  .glass-preview { gap: 10px; padding: 12px; }
+  .glass-preview-surface { padding: 10px; }
+}

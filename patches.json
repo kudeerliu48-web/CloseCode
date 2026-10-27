@@ -1,0 +1,12 @@
+{
+  "patches": [
+    {
+      "version": "2.0.1",
+      "baseVersion": "2.0.0",
+      "url": "/updates/patches/2.0.1.zip",
+      "size": 57676,
+      "sha256": "0b2848de48413f3ca8912383bcc8c8180260ea9fcdab6cc7d278504f8ac948a4",
+      "releaseDate": "2026-09-18"
+    }
+  ]
+}

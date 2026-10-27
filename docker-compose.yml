@@ -1,0 +1,19 @@
+services:
+  closecode:
+    build: .
+    image: closecode:latest
+    container_name: closecode
+    restart: unless-stopped
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3800
+    ports:
+      # 只绑本机回环，外面用 nginx/caddy 反代过来。
+      # 不要直接暴露公网：服务进程具备执行 shell 命令的能力。
+      - "127.0.0.1:3800:3800"
+    volumes:
+      - ./config.json:/app/config.json      # 模型 Key 等配置（首次跑之前先 cp config.example.json config.json）
+      - ./data:/app/data                    # 会话、设置与运行记录
+      - ./workspace:/app/workspace          # 成果文件
+      - ./skills:/app/skills                # 技能（改完立刻生效，不用重建镜像）
+      - ./experts.json:/app/experts.json

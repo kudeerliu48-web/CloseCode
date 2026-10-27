@@ -1,0 +1,343 @@
+/* ============================================================================
+ * ui.css —— 借 shadcn/ui 的设计系统，但不上 React
+ *
+ * shadcn/ui 本体是 React + Tailwind + Radix。这个前端是零构建的原生 HTML/CSS/JS，
+ * 直接搬等于把整个界面重写一遍，还会毁掉「clone 下来双击就能跑」这个开源项目最值钱的性质。
+ * 所以搬的是它真正可移植的那两层：
+ *   1. 令牌契约 —— background / foreground / muted / border / ring / radius 这套名字和语义，
+ *      和 shadcn v4 一字不差。--wb-* 全部改成指向它们，颜色只有这一个真源。
+ *   2. 组件几何 —— 按钮 h-36 / 圆角 8 / 字号 14 / 图标 16 / focus 3px ring，
+ *      输入框 h-36，卡片 rounded-lg，尺寸档 sm/lg/icon，全部照抄 shadcn 的数值。
+ * 结果是：以后真要迁到 React，这份文件整份丢掉、className 换成 shadcn 的类名即可，
+ * 是一次重命名，不是一次重写。今天则立刻拿到统一的控件节奏。
+ *
+ * 图标用 lucide（shadcn 官方图标集，ISC 协议），以内联 sprite 形式随页面走，不联网。
+ * ========================================================================== */
+
+/* ---------- 令牌契约（命名与语义同 shadcn v4） ---------- */
+:root {
+  --radius: 10px;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --background: #ffffff;
+  --input-surface: #ffffff;
+  --foreground: #17181c;
+  --card: #ffffff;
+  --card-foreground: #17181c;
+  --popover: #ffffff;
+  --popover-foreground: #17181c;
+  --primary: #5b5ff7;
+  --primary-foreground: #ffffff;
+  --secondary: #f7f8fa;
+  --secondary-foreground: #17181c;
+  --muted: #f7f8fa;
+  --muted-foreground: #6a6f7d;
+  --subtle-foreground: #9aa0ad;      /* 比 muted 更淡的第三级文字，shadcn 没这一档，本项目要 */
+  --accent: #eef0f4;
+  --accent-foreground: #17181c;
+  --destructive: #e5484d;
+  --destructive-foreground: #ffffff;
+  --success: #16a34a;
+  --border: #e9ebf0;
+  --input: #e9ebf0;
+  --ring: #5b5ff7;
+  --ring-weak: #eef0ff;              /* focus 光圈用的低饱和底色 */
+  --warning: #b26a00;                /* shadcn 没这一档，本项目「跳过了一些零件」这类提示要用 */
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+html[data-theme="dark"] {
+  --background: #1e1f24;
+  --input-surface: #292b32;
+  --foreground: #e8eaf0;
+  --card: #1e1f24;
+  --card-foreground: #e8eaf0;
+  --popover: #24262c;
+  --popover-foreground: #e8eaf0;
+  --primary: #5b5ff7;
+  --primary-foreground: #ffffff;
+  --secondary: #17181c;
+  --secondary-foreground: #e8eaf0;
+  --muted: #17181c;
+  --muted-foreground: #a4a9b6;
+  --subtle-foreground: #7a8090;
+  --accent: #2b2d34;
+  --accent-foreground: #e8eaf0;
+  --destructive: #e5484d;
+  --border: #34363e;
+  --input: #34363e;
+  --ring: #8b8fff;
+  --ring-weak: #2e3054;
+  --warning: #d9a441;
+}
+
+/* ---------- 图标：lucide sprite 的统一外观 ---------- */
+/* stroke/fill/stroke-width 都是可继承属性，写在 .i 上，<use> 影子树里的图形会继承过去 */
+.i {
+  width: 1em; height: 1em; flex: none; display: inline-block; vertical-align: -0.145em;
+  stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  pointer-events: none;
+}
+.i.i-sm { width: .875em; height: .875em; }
+#wb-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* ---------- Button（几何照抄 shadcn：h-9 / px-4 / rounded-md / text-sm / icon 16px） ---------- */
+.ui-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 36px; padding: 0 16px; border-radius: var(--radius-md);
+  font-size: 14px; font-weight: 500; line-height: 1; white-space: nowrap;
+  border: 1px solid transparent; background: transparent; color: var(--foreground);
+  cursor: pointer; user-select: none; text-decoration: none;
+  transition: background-color .18s var(--wb-ease, ease), border-color .18s var(--wb-ease, ease),
+              color .18s var(--wb-ease, ease), box-shadow .18s var(--wb-ease, ease), opacity .18s var(--wb-ease, ease);
+}
+.ui-btn .i { width: 16px; height: 16px; }
+.ui-btn:focus-visible { outline: none; border-color: var(--ring); box-shadow: 0 0 0 3px var(--ring-weak); }
+.ui-btn:disabled, .ui-btn[aria-disabled="true"] { opacity: .5; pointer-events: none; }
+.ui-btn:active { transform: scale(.97); }
+
+.ui-btn--default { background: var(--primary); color: var(--primary-foreground); }
+.ui-btn--default:hover { filter: brightness(1.06); }
+.ui-btn--secondary { background: var(--secondary); color: var(--secondary-foreground); }
+.ui-btn--secondary:hover { background: var(--accent); }
+.ui-btn--outline { background: var(--background); color: var(--foreground); border-color: var(--input); }
+.ui-btn--outline:hover { background: var(--accent); }
+.ui-btn--ghost { color: var(--muted-foreground); }
+.ui-btn--ghost:hover { background: var(--accent); color: var(--accent-foreground); }
+.ui-btn--destructive { background: var(--destructive); color: var(--destructive-foreground); }
+.ui-btn--destructive:hover { filter: brightness(1.06); }
+.ui-btn--link { color: var(--primary); height: auto; padding: 0; }
+.ui-btn--link:hover { text-decoration: underline; }
+
+.ui-btn--sm { height: 32px; padding: 0 12px; font-size: 13px; gap: 6px; border-radius: var(--radius-sm); }
+.ui-btn--sm .i { width: 14px; height: 14px; }
+.ui-btn--xs { height: 26px; padding: 0 10px; font-size: 12px; gap: 5px; border-radius: var(--radius-sm); }
+.ui-btn--xs .i { width: 13px; height: 13px; }
+.ui-btn--lg { height: 40px; padding: 0 24px; font-size: 15px; }
+.ui-btn--icon { width: 36px; height: 36px; padding: 0; }
+.ui-btn--icon.ui-btn--sm { width: 32px; height: 32px; }
+.ui-btn--block { display: flex; width: 100%; }
+
+/* ---------- Input（h-9，focus 走 ring） ---------- */
+.ui-input {
+  height: 36px; width: 100%; min-width: 0; padding: 0 12px;
+  border: 1px solid var(--input); border-radius: var(--radius-md);
+  background: var(--background); color: var(--foreground); font-size: 14px;
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+.ui-input::placeholder { color: var(--subtle-foreground); }
+.ui-input:focus { outline: none; border-color: var(--ring); box-shadow: 0 0 0 3px var(--ring-weak); }
+
+/* Project editor fields: restrained resting contrast, clear brand focus. */
+.proj-form-field > input,
+.proj-form-field > div > input {
+  box-sizing: border-box;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid color-mix(in srgb, var(--foreground) 38%, var(--background));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--background) 94%, var(--foreground));
+  color: var(--foreground);
+  box-shadow: none;
+}
+.proj-form-field > input:hover,
+.proj-form-field > div > input:hover {
+  border-color: color-mix(in srgb, var(--foreground) 52%, var(--background));
+}
+.proj-form-field > input:focus,
+.proj-form-field > div > input:focus {
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px var(--ring-weak);
+}
+
+/* Keep native selection, keyboard navigation and a fallback for older browsers. */
+.settings-select-wrap { position: relative; min-width: 0; width: 100%; }
+.settings-select-wrap::after {
+  content: ""; position: absolute; right: 15px; top: calc(50% - 5px); width: 7px; height: 7px;
+  border-right: 1.5px solid var(--wb-text-2); border-bottom: 1.5px solid var(--wb-text-2);
+  transform: rotate(45deg); pointer-events: none;
+}
+.settings-pane .settings-select-wrap select.settings-select {
+  display: block; width: 100%; min-width: 0; height: 40px; margin: 0; padding: 0 38px 0 12px;
+  border: 1px solid var(--wb-border); border-radius: 12px; background: var(--background); color: var(--wb-text);
+  font: inherit; font-size: 13px; font-weight: 500; line-height: 1.5;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; appearance: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.settings-pane .settings-select-wrap select.settings-select:hover { border-color: var(--wb-text-3); }
+.settings-pane .settings-select-wrap select.settings-select:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-color: var(--ring); box-shadow: none; }
+.settings-pane .settings-select-wrap select.settings-select option { background: var(--popover); color: var(--popover-foreground); }
+.pet-character-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.pet-character-row .settings-select-wrap { flex: 1 1 200px; max-width: 280px; }
+.pet-character-row .settings-action-btn { height: 40px; border-radius: 12px; }
+.pet-range-field { margin-top: 16px; }
+@supports (appearance: base-select) {
+  .settings-select-wrap::after { display: none; }
+  .settings-pane .settings-select-wrap select.settings-select,
+  .settings-pane .settings-select-wrap select.settings-select::picker(select) { appearance: base-select; }
+  .settings-pane .settings-select-wrap select.settings-select { display: flex; align-items: center; padding-right: 12px; }
+  .settings-pane .settings-select-wrap select.settings-select::picker-icon { flex: none; margin-left: auto; padding-left: 12px; color: var(--wb-text-2); transition: rotate .15s ease; }
+  .settings-pane .settings-select-wrap select.settings-select:open { border-color: var(--ring); }
+  .settings-pane .settings-select-wrap select.settings-select:open::picker-icon { rotate: 180deg; }
+  .settings-pane .settings-select-wrap select.settings-select::picker(select) {
+    box-sizing: border-box; margin-block: 6px; padding: 5px; width: anchor-size(width); min-width: 0; max-width: calc(100vw - 24px);
+    max-height: min(320px, 45dvh); overflow-y: auto; overscroll-behavior: contain;
+    border: 1px solid var(--wb-border); border-radius: 14px; background: var(--popover); color: var(--popover-foreground);
+    box-shadow: 0 12px 32px rgba(0,0,0,.16), 0 2px 6px rgba(0,0,0,.08);
+  }
+  /* Pet picker only: a slim theme-aware scrollbar without shifting option text. */
+  .settings-pane #pet-char::picker(select) {
+    max-height: min(288px, 45dvh);
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--wb-text-3) var(--popover);
+    scrollbar-gutter: stable;
+    overscroll-behavior-y: contain;
+  }
+  .settings-pane #pet-char::picker(select):hover {
+    scrollbar-color: var(--wb-text-2) var(--popover);
+  }
+  .settings-pane .settings-select-wrap select.settings-select option {
+    display: flex; align-items: center; gap: 12px; min-height: 40px; padding: 9px 12px; margin: 0;
+    border: 0; border-radius: 9px; background: transparent; color: var(--popover-foreground);
+    font-size: 13px; line-height: 1.5; white-space: normal; overflow-wrap: anywhere; cursor: pointer;
+  }
+  .settings-pane .settings-select-wrap select.settings-select option:checked { background: var(--wb-brand-weak); color: var(--ring); font-weight: 600; }
+  .settings-pane .settings-select-wrap select.settings-select option:is(:hover, :focus-visible) { background: var(--accent); outline: 2px solid var(--ring); outline-offset: -2px; }
+  .settings-pane .settings-select-wrap select.settings-select option::checkmark { order: 1; flex: none; margin-left: auto; color: var(--ring); }
+}
+@media (max-width: 640px) {
+  .settings-pane .settings-select-wrap select.settings-select { height: 44px; font-size: 16px; }
+  .settings-pane .settings-select-wrap select.settings-select option { min-height: 44px; font-size: 14px; }
+  .pet-character-row .settings-select-wrap { max-width: none; }
+  .pet-character-row .settings-action-btn { height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .settings-pane .settings-select-wrap select.settings-select,
+  .settings-pane .settings-select-wrap select.settings-select::picker-icon { transition: none; }
+}
+
+/* Shared settings slider: a slim track inside a larger drag target. */
+.settings-range-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 2px; font-size: 13px; color: var(--wb-text-2); }
+.settings-range-value { flex: none; color: var(--wb-brand); font-weight: 600; font-variant-numeric: tabular-nums; }
+.settings-range-labels { display: flex; justify-content: space-between; gap: 8px; margin-top: 2px; font-size: 11px; color: var(--wb-text-3); }
+.settings-pane input.settings-range[type="range"] {
+  --range-progress: 0%;
+  --range-track: linear-gradient(to right, var(--wb-brand) 0%, var(--wb-brand) var(--range-progress), var(--wb-border) var(--range-progress), var(--wb-border) 100%);
+  --range-thumb-shadow: 0 1px 4px rgba(0,0,0,.2);
+  display: block; width: 100%; min-width: 0; height: 32px; margin: 0; padding: 0;
+  border: 0; border-radius: 999px; background: transparent; box-shadow: none;
+  -webkit-appearance: none; appearance: none; outline: none; cursor: pointer;
+}
+.settings-pane input.settings-range[type="range"]::-webkit-slider-runnable-track {
+  height: 6px; border: 0; border-radius: 999px; background: var(--range-track);
+}
+.settings-pane input.settings-range[type="range"]::-moz-range-track {
+  height: 6px; border: 0; border-radius: 999px; background: var(--range-track);
+}
+.settings-pane input.settings-range[type="range"]::-moz-range-progress { background: transparent; }
+.settings-pane input.settings-range[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; box-sizing: border-box;
+  width: 20px; height: 20px; margin-top: -7px; border: 1px solid rgba(0,0,0,.12); border-radius: 50%;
+  background: #fff; box-shadow: var(--range-thumb-shadow); transform: none; cursor: grab;
+  transition: box-shadow .15s ease;
+}
+.settings-pane input.settings-range[type="range"]::-moz-range-thumb {
+  box-sizing: border-box; width: 20px; height: 20px; border: 1px solid rgba(0,0,0,.12); border-radius: 50%;
+  background: #fff; box-shadow: var(--range-thumb-shadow); transform: none; cursor: grab;
+  transition: box-shadow .15s ease;
+}
+.settings-pane input.settings-range[type="range"]:is(:hover, :active) { --range-thumb-shadow: 0 0 0 4px var(--ring-weak), 0 2px 5px rgba(0,0,0,.2); }
+.settings-pane input.settings-range[type="range"]:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.settings-pane input.settings-range[type="range"]:active::-webkit-slider-thumb { cursor: grabbing; }
+.settings-pane input.settings-range[type="range"]:active::-moz-range-thumb { cursor: grabbing; }
+@media (pointer: coarse) {
+  .settings-pane input.settings-range[type="range"] { height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .settings-pane input.settings-range[type="range"]::-webkit-slider-thumb { transition: none; }
+  .settings-pane input.settings-range[type="range"]::-moz-range-thumb { transition: none; }
+}
+@media (forced-colors: active) {
+  .settings-pane input.settings-range[type="range"]::-webkit-slider-runnable-track { background: CanvasText; }
+  .settings-pane input.settings-range[type="range"]::-moz-range-track { background: CanvasText; }
+  .settings-pane input.settings-range[type="range"]::-webkit-slider-thumb { background: Highlight; border-color: CanvasText; }
+  .settings-pane input.settings-range[type="range"]::-moz-range-thumb { background: Highlight; border-color: CanvasText; }
+}
+
+/* ---------- Card ---------- */
+.ui-card { background: var(--card); color: var(--card-foreground); border: 1px solid var(--border); border-radius: var(--radius-xl); }
+.ui-card-header { padding: 14px 16px 0; }
+.ui-card-title { font-size: 15px; font-weight: 600; }
+.ui-card-desc { font-size: 13px; color: var(--muted-foreground); margin-top: 2px; }
+.ui-card-content { padding: 12px 16px; }
+.ui-card-footer { display: flex; align-items: center; gap: 8px; padding: 0 16px 14px; }
+
+/* ---------- Badge ---------- */
+.ui-badge {
+  display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px;
+  border: 1px solid transparent; border-radius: 999px; font-size: 12px; font-weight: 500; line-height: 1.5;
+}
+.ui-badge .i { width: 12px; height: 12px; }
+.ui-badge--secondary { background: var(--secondary); color: var(--secondary-foreground); }
+.ui-badge--outline { border-color: var(--border); color: var(--muted-foreground); }
+.ui-badge--destructive { background: color-mix(in srgb, var(--destructive) 14%, transparent); color: var(--destructive); }
+.ui-badge--success { background: color-mix(in srgb, var(--success) 14%, transparent); color: var(--success); }
+
+/* ---------- Separator ---------- */
+.ui-separator { height: 1px; background: var(--border); border: 0; margin: 8px 0; }
+.ui-separator[data-orientation="vertical"] { width: 1px; height: auto; align-self: stretch; margin: 0 8px; }
+
+/* ---------- Tooltip（顶掉浏览器原生 title：原生那个又慢又丑，长路径直接糊一大片灰） ---------- */
+.ui-tooltip {
+  position: fixed; z-index: 9999; max-width: 320px; padding: 6px 10px;
+  border-radius: var(--radius-sm); background: var(--foreground); color: var(--background);
+  font-size: 12px; line-height: 1.5; word-break: break-all; pointer-events: none;
+  box-shadow: 0 4px 14px rgba(0,0,0,.18);
+  opacity: 0; transform: translateY(2px); transition: opacity .12s ease, transform .12s ease;
+}
+.ui-tooltip.show { opacity: 1; transform: translateY(0); }
+
+/* ---------- Skeleton ---------- */
+.ui-skeleton { background: var(--accent); border-radius: var(--radius-sm); animation: uiPulse 1.6s ease-in-out infinite; }
+
+/* ---------- 消息时间戳显示 ---------- */
+.msg-time {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  opacity: 0.7;
+  user-select: none;
+}
+
+.a-msg-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.a-msg .msg-time {
+  text-align: left;
+  margin-bottom: 4px;
+}
+
+.msg-time:hover {
+  opacity: 1;
+}
+@keyframes uiPulse { 0%,100% { opacity: 1 } 50% { opacity: .5 } }
+
+/* ---------- 右键菜单样式 ---------- */
+.context-menu-item {
+  padding: 8px 12px;
+  font-size: 14px;
+  color: var(--foreground);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.15s ease;
+  user-select: none;
+}
+
+.context-menu-item:hover {
+  background: var(--accent);
+}

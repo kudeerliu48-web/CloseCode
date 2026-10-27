@@ -1,0 +1,139 @@
+{
+  "width": 256,
+  "height": 288,
+  "fps": 12,
+  "columns": 4,
+  "rows": 4,
+  "alpha": true,
+  "renderer": "Python/Pillow triangle rasterizer; 2x SSAA; orthographic depth buffer; smooth normal lighting",
+  "model": {
+    "file": "source/neutral.obj",
+    "materials": "source/neutral.mtl",
+    "vertices": 7912,
+    "triangles": 12860,
+    "upAxis": "Y",
+    "frontAxis": "Z"
+  },
+  "states": {
+    "working": {
+      "file": "working.png",
+      "frames": 16,
+      "columns": 4,
+      "rows": 4,
+      "loop": true
+    },
+    "done": {
+      "file": "done.png",
+      "frames": 16,
+      "columns": 4,
+      "rows": 4,
+      "loop": true
+    },
+    "snack": {
+      "file": "snack.png",
+      "frames": 16,
+      "columns": 4,
+      "rows": 4,
+      "loop": true
+    },
+    "walk": {
+      "file": "walk.png",
+      "frames": 16,
+      "columns": 4,
+      "rows": 4,
+      "loop": true
+    },
+    "sleep": {
+      "file": "sleep.png",
+      "frames": 16,
+      "columns": 4,
+      "rows": 4,
+      "loop": true
+    },
+    "idle": {
+      "file": "idle.png",
+      "frames": 16,
+      "columns": 4,
+      "rows": 4,
+      "loop": true
+    },
+    "tantrum": {
+      "file": "tantrum.png",
+      "frames": 16,
+      "columns": 4,
+      "rows": 4,
+      "loop": true
+    },
+    "proud": {
+      "file": "proud.png",
+      "frames": 16,
+      "columns": 4,
+      "rows": 4,
+      "loop": true
+    },
+    "swing": {
+      "file": "swing.png",
+      "frames": 16,
+      "columns": 4,
+      "rows": 4,
+      "loop": true
+    }
+  },
+  "aliases": {
+    "work": "working",
+    "asking": "idle"
+  },
+  "overlays": {
+    "coordinateSpace": "single sprite logical pixels, origin top-left; scale together with sprite",
+    "done": {
+      "polygon": [
+        [
+          43,
+          170
+        ],
+        [
+          213,
+          170
+        ],
+        [
+          213,
+          220
+        ],
+        [
+          43,
+          220
+        ]
+      ],
+      "center": [
+        128,
+        195
+      ],
+      "boardSize": {
+        "width": 170,
+        "height": 50
+      },
+      "safeRect": {
+        "x": 60,
+        "y": 178,
+        "width": 136,
+        "height": 32
+      },
+      "lineHeight": 16,
+      "font": "bold 14px sans-serif",
+      "color": "#594374",
+      "text": "runtime token text; board intentionally blank"
+    },
+    "sleep": {
+      "zzzAnchor": [
+        194,
+        115
+      ],
+      "dreamAnchor": [
+        128,
+        61
+      ],
+      "text": "runtime zzz and coin dream; not baked"
+    }
+  },
+  "source": "../../../scripts/render-yaya-3d.py"
+}

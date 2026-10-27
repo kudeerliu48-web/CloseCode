@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "status": "local-user-audio",
+  "source": "用户提供；按文件名映射，非台词转写。asking 共用遇到问题。",
+  "states": {
+    "swing": { "file": "../mp3/荡秋千.mp3", "available": true },
+    "working": { "file": "../mp3/干活.mp3", "available": true },
+    "done": { "file": "../mp3/做完了.mp3", "available": true },
+    "asking": { "file": "../mp3/遇到问题.mp3", "available": true },
+    "error": { "file": "../mp3/遇到问题.mp3", "available": true },
+    "sleep": { "file": "../mp3/睡觉.mp3", "available": true },
+    "wake": { "file": "../mp3/醒了.mp3", "available": true },
+    "snack": { "file": "../mp3/烤串.mp3", "available": true },
+    "tantrum": { "file": "../mp3/我要验牌.mp3", "available": true },
+    "tantrum_hint": { "file": "../mp3/token不足.mp3", "available": true },
+    "proud_hint": { "file": "../mp3/生气傲娇.mp3", "available": true },
+    "proud": { "file": "../mp3/牛逼.mp3", "available": true },
+    "quota_error": { "file": "../mp3/token不足.mp3", "available": true },
+    "dream": { "file": "../mp3/做梦.mp3", "available": true },
+    "walk": { "file": "../mp3/擦皮鞋.mp3", "available": true },
+    "entrance": { "file": "../mp3/闪亮登场.mp3", "available": true },
+    "working_hint": { "file": "../mp3/马上就好.mp3", "available": true }
+  }
+}

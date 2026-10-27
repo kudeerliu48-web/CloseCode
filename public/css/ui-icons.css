@@ -1,0 +1,84 @@
+/* Raster equivalents of the workbench's outline icon family. */
+.ui-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  object-fit: contain;
+  vertical-align: -4px;
+  filter: none;
+}
+.ui-icon--sm { width: 14px; height: 14px; vertical-align: -2px; }
+.ui-icon--lg { width: 32px; height: 32px; }
+.ui-icon--hero { width: 48px; height: 48px; }
+html[data-theme="dark"] .ui-icon { filter: brightness(0) invert(.84); }
+
+/* A quiet, consistent hit target instead of differently sized emoji glyphs. */
+.settings-nav .cat {
+  width: 100%;
+  padding: 6px 10px;
+  flex-shrink: 0;
+  text-align: left;
+  font-family: inherit;
+  background: transparent;
+}
+.settings-nav .cat .cat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border-radius: 8px;
+  background: var(--wb-bg-hover);
+  opacity: 1;
+  transform: none;
+  transition: background .16s ease;
+}
+.settings-nav .cat:hover .cat-icon,
+.settings-nav .cat.active .cat-icon { transform: none; }
+.settings-nav .cat.active .cat-icon { background: var(--wb-brand); }
+.settings-nav .cat.active .ui-icon,
+.settings-pane .btn-brand .ui-icon,
+#profile-lottery-btn .ui-icon,
+.settings-pane .settings-action-btn.primary .ui-icon,
+.avatar-badge-edit .ui-icon { filter: brightness(0) invert(1); }
+.settings-nav .cat:focus-visible { outline: 2px solid var(--wb-brand); outline-offset: 2px; }
+.settings-pane .t > .ui-icon { margin-right: 2px; }
+
+/* This shared rule covers the composer, assistant header and settings tabs.
+   Only monochrome logos change tone; never invert Claude/Gemini brand colors. */
+.model-provider-icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  object-fit: contain;
+  vertical-align: middle;
+  filter: none;
+}
+html[data-theme="dark"] .model-provider-icon--mono { filter: brightness(0) invert(.94); }
+#model-label, #im-model-label { gap: 6px; min-width: 0; }
+#model-label > .ui-icon, #im-model-label > .ui-icon { width: 18px; height: 18px; }
+#model-label .picker-model-name, #im-model-label .picker-model-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.provider-tab-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+}
+.provider-tab-mark > .ui-icon { width: 18px; height: 18px; }
+/* A light tile keeps every brand readable on the selected purple tab. */
+.provider-tab.active .provider-tab-mark { background: #fff; }
+.provider-tab.active .provider-tab-mark > img { filter: none; }
+.ui-icon--spin { width: 14px; height: 14px; animation: ui-icon-spin 1.2s linear infinite; }
+@keyframes ui-icon-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .ui-icon--spin { animation: none; } }
